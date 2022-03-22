@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('pets', function (Blueprint $table) {
-            //campos para ir a crear la tabla // crear la BD
-
-            $table->increments('id');
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
             $table->string('name');
-            $table->string('color');
-            $table->string('edad');
-            $table->timestamps(); //crea dos campos, una para la fecha de la creacion del registo y otra para la fecha de la modificacion
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pets');
+        Schema::dropIfExists('users');
     }
 };

@@ -1,0 +1,1 @@
+<h1>Formulario que tendra los datos en comun en create y edit</h1>

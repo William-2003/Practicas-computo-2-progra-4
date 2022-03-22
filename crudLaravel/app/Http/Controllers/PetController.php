@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+/* Agregar el modelo para poder trabajar con el controlador */
+use App\Models\Pet;
 use Illuminate\Http\Request;
 
 class PetController extends Controller
@@ -13,7 +14,9 @@ class PetController extends Controller
      */
     public function index()
     {
-        return view('pet.index');
+        $data['pets'] = Pet::paginate(5); /* 5 es el numero de datos a mostrar */
+        return view('pet.index', $data);
+        /* es para ir a traer los datos que se han almacenado */
     }
 
     /**
@@ -21,10 +24,16 @@ class PetController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+
+    
     public function create()
     {
         return view('pet.create');
     }
+
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -34,8 +43,14 @@ class PetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //todos los datos que se envien, se guardaran aqui que se envian en el metodo POST
+
+        /* PARA ENVIAR TODOS LOS PARAMETROS       $petData = request() ->all(); */
+        $petData = request() ->except('_token'); /* para enviar todos los campos excepto el token */
+        Pet::insert($petData); /* usamos el modelo y le pasamos la data que se envia del formulario */
+        return response() -> json($petData);
     }
+
 
     /**
      * Display the specified resource.
@@ -56,7 +71,10 @@ class PetController extends Controller
      */
     public function edit($id)
     {
-        //
+        //recuperar los datos
+        $pet=Pet::findOrFail($id);
+        return view('pet.edit', compact('pet'));
+
     }
 
     /**
@@ -68,8 +86,16 @@ class PetController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //recibe los datos al igual que el create
+        $petData = request()->except(['_token','_method']);
+        Pet::where('id','=', $id)->update($petData);
+        return redirect('pet');
     }
+
+
+
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -79,6 +105,8 @@ class PetController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //eliminar el registro en la BD
+        Pet::destroy($id);
+        return redirect('pet');
     }
 }
